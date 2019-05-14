@@ -8,24 +8,30 @@ import 'package:flutter_lxxfirst/entity/patient.dart';
 import 'news_list_page.dart';
 
 // ignore: must_be_immutable
-class SecondPage extends StatefulWidget {
+class SecondPage extends StatelessWidget {
   String message;
 
   SecondPage({Key key, @required this.message}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return _SecondPage();
+  Widget build(BuildContext context) {
+    return SecondVPage();
   }
 }
 
-class _SecondPage extends State<SecondPage> {
+class SecondVPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _SecondVPage();
+  }
+}
+
+class _SecondVPage extends State<SecondVPage> {
   var msg = "";
 
   @override
   void initState() {
     super.initState();
-    getHttpInstance(context);
     print("====11" + msg);
   }
 
@@ -33,6 +39,13 @@ class _SecondPage extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: new IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          tooltip: "返回",
+        ),
         title: Text("Router页面"),
       ),
       body: Container(
@@ -82,10 +95,22 @@ class MyWidget extends StatelessWidget {
               RaisedButton(
                   child: Text("返回第一页"),
                   onPressed: () {
-                    Navigator.pop(context, "这是返回结果");
+                    Animal ani = Animal("boy", "uuuuu");
+                    Navigator.pop(context, ani);
                   }),
-              RaisedButton(
-                child: Text("点击去详情页面"),
+              Material(
+                shape: StadiumBorder(
+                    side: BorderSide(color: Colors.black, width: 5.0)),
+                shadowColor: Colors.red,
+                elevation: 10.0,
+                color: Colors.cyan,
+                child: FlatButton(
+                  child: Text("Material样式"),
+                ),
+              ),
+              FlatButton(
+                color: Colors.amberAccent,
+                child: Text("点击去患者列表"),
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -93,6 +118,21 @@ class MyWidget extends StatelessWidget {
                         builder: (context) => NewPage(groupId: "123456"),
                       ));
                 },
+              ),
+              Container(
+                color: Colors.green,
+                width: 100,
+                height: 100.0,
+                child: Stack(
+                  overflow: Overflow.visible,//Overflow.clip(截断) 和Overflow.visible(显示) 可选
+                  children: <Widget>[
+                    Positioned(
+                      left: 50,//相对于左边的的位置
+                      bottom: 50,
+                      child: Text("Stack位置"),
+                    )
+                  ],
+                ),
               )
             ]));
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lxxfirst/ui/second.dart';
 import 'dart:developer';
+import 'package:flutter_lxxfirst/entity/Animal.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,//去掉右上角的debug标签
       routes: <String, WidgetBuilder>{
         "one": (BuildContext context) => new MyApp(),
         "two": (BuildContext context) => new SecondPage(message: secondName),
@@ -219,7 +221,7 @@ class _SecondRowState extends State<SecondRow> {
 //                  MaterialPageRoute(
 //                      builder: (context) => SecondPage(message: "给你数据")));
               secondName = "newName";
-              startSecond();
+              startSecond2();
             },
           )),
           Expanded(flex: 1, child: Text("asd")),
@@ -234,14 +236,18 @@ class _SecondRowState extends State<SecondRow> {
 
   void startSecond() async {
     var result = await Navigator.of(context).pushNamed("two");
+    if(null == result)return;
+    var ani = result as Animal;
     Scaffold.of(context)
-        .showSnackBar(new SnackBar(content: new Text("$result")));
+        .showSnackBar(new SnackBar(content: new Text(ani.name)));
   }
 
   void startSecond2() {
     Navigator.of(context).pushNamed("two").then((result) {
+      if(null == result) return;
+      var animal = result as Animal;
       Scaffold.of(context)
-          .showSnackBar(new SnackBar(content: new Text("$result")));
+          .showSnackBar(new SnackBar(content: new Text("sad")));
     });
   }
 }
