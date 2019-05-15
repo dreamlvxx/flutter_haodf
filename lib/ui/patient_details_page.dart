@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PatientDetailsPage extends StatelessWidget {
   String patientId;
@@ -10,16 +11,30 @@ class PatientDetailsPage extends StatelessWidget {
         title: Text("患者详情页"),
       ),
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
+        width: double.infinity,//最大化
+        height: double.infinity,//最大化
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, //靠左右两边绘制
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               child: Text("sad"),
             ),
-            PatientDetail()
+            PatientDetail(),
+            Stack(//可以重叠组件的view，类似于relativelayout
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.center,
+                  color: const Color(0xff666666),
+                  width: double.infinity,
+                  child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text("stack",
+                          style: TextStyle(
+                              fontSize: 20, color: const Color(0xffff00ff)))),
+                )
+              ],
+            )
           ],
         ),
       ),
@@ -35,10 +50,24 @@ class PatientDetail extends StatefulWidget {
 }
 
 class _PatientDetail extends State<PatientDetail> {
+  bool ifOff = true;
+  var imageFile;
+  Future getImage () async{
+    var file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      imageFile = file;
+    });
+  }
+  Future tajePhoto () async{
+    var file = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      imageFile = file;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,//从两边开始绘制
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
@@ -62,15 +91,71 @@ class _PatientDetail extends State<PatientDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 //container 中内容对齐方式用alignment属性
-                Container(height: 50.0,alignment: Alignment.center,width: double.infinity,color: Colors.pink, child: Text("第一个")),
+                Container(
+                    height: 50.0,
+                    alignment: Alignment.center,//内容对齐方式
+                    width: double.infinity,
+                    color: Colors.pink,
+                    child: FlatButton(//扁平化的按钮
+                        onPressed: () {
+                          setState(() {
+                            ifOff = !ifOff;
+                          });
+                        },
+                        child: Text("第二个消失吧"))),
+                Divider(//专用分割线
+                  height: 1.0,
+                  color: const Color(0xff00ffff),
+                ),
                 //在布局中，想让一个元素充满父布局的剩余空间，用Expand
                 Expanded(
-                  //double.infinity 会强制让一个元素充满
-                  child: Container(width: double.infinity,color: Colors.yellow, child: Text("第二个")),
-                )
+                  child: AnimatedOpacity(//可设置透明度的组件
+                    opacity: ifOff ? 1.0 : 0.0,
+                    duration: Duration(milliseconds: 500),
+                    child: Container(
+                        alignment: Alignment.center,
+                        width: double.infinity,
+                        color: Colors.pink,
+                        child: Padding(
+                            padding: EdgeInsets.all(3.0),
+                            child: Text("会消失的组件"))),
+                  ),
+                ),
+                getImageView(imageFile),
+                Row(
+                  children: <Widget>[
+                    FlatButton(
+                      color: Colors.pink,
+                      child: Text("相册选择"),
+                      onPressed: (){
+                        getImage();
+                      },
+                    ),
+                    FlatButton(
+                      color: Colors.pink,
+                      child: Text("拍照"),
+                      onPressed: (){
+                        tajePhoto();
+                      },
+                    ),
+                  ],
+                ),
+
+
               ],
             )),
       ],
     );
+  }
+  Widget getImageView(imagepath){
+    if(null == imagepath){
+      return Center(
+        child: Text("请选择照片"),
+      );
+    }else{
+      return Center(
+        child: Image.file(imagepath,height: 50),
+      );
+    }
   }
 }
